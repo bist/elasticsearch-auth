@@ -1,3 +1,6 @@
+
+[![Build Status](https://travis-ci.org/bist/elasticsearch-auth.png?branch=master)](https://travis-ci.org/bist/elasticsearch-auth)
+
 ElasticAuth-Jetty
 =================
 
