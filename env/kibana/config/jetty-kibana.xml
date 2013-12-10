@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure id="ESServer" class="org.eclipse.jetty.server.Server">
+
+   <New class="com.bist.elasticsearch.jetty.security.AuthorizationConfigurationWatcher" id="AuthorizationConfigurationWatcher">
+       <Set name="authorizationMappingFile">ldap-mapping.ini</Set>
+       <Set name="environment"><Ref refid="ESEnvironment"/></Set>
+   </New>
+
+    <New class="com.bist.elasticsearch.jetty.security.ElasticConstraintSecurityHandler" id="SecurityHandler">
+        <Set name="realmName">Ldap Realm</Set>
+        <!--<Set name="strict">true</Set>-->
+        <Set name="sessionRenewedOnAuthentication">true</Set>
+        <Set name="authorizationConfigurationWatcher"><Ref refid="AuthorizationConfigurationWatcher"/></Set>
+        <Set name="authenticator">
+            <New class="org.eclipse.jetty.security.authentication.FormAuthenticator">
+                <Arg>/kibana/Login.html</Arg>
+                <Arg>/kibana/LoginError.html</Arg>
+                <Arg type="boolean">false</Arg>
+                <Set name="alwaysSaveUri">true</Set>
+            </New>
+        </Set>
+    </New>
+
+
+    <New class="org.eclipse.jetty.servlet.ServletContextHandler" id="ServletContextHandler">
+        <Arg type="int">3</Arg>
+        <Set name="contextPath">/</Set>
+        <Set name="securityHandler">
+            <Ref refid="SecurityHandler"/>
+        </Set>
+        <Get name="servletHandler" id="ServletHandler">
+            <Call name="addServletWithMapping">
+                <Arg>org.eclipse.jetty.servlet.DefaultServlet</Arg>
+                <Arg>/kibana/*</Arg>
+                <Call name="setInitParameter">
+                    <Arg>resourceBase</Arg>
+                    <Arg><Property name="jetty.gui"/> </Arg>
+                    <!--<Arg>D:/Projects/works/elasticsearch/kibana-3.0.0milestone4</Arg>-->
+                </Call>
+                <Call name="setInitParameter">
+                    <Arg>pathInfoOnly</Arg>
+                    <Arg>true</Arg>
+                </Call>
+            </Call>
+            <Call name="addServletWithMapping">
+                <Arg>com.bist.elasticsearch.jetty.LogoutServlet</Arg>
+                <Arg>/j_logout</Arg>
+            </Call>
+            <Set name="handler">
+                <New id="HttpServerAdapterHandler"
+                     class="com.bist.elasticsearch.jetty.handler.JettyHttpServerTransportHandler">
+                    <Set name="transport">
+                        <Ref refid="ESServerTransport"/>
+                    </Set>
+                </New>
+            </Set>
+        </Get>
+    </New>
+
+
+    <!--    <New class="org.eclipse.jetty.servlet.ServletHandler" id="ServletHandler">
+
+        </New>-->
+
+    <New class="org.eclipse.jetty.rewrite.handler.RewriteHandler" id="RewriteHandler">
+        <Set name="rewriteRequestURI">true</Set>
+        <Set name="rewritePathInfo">true</Set>
+        <Set name="originalPathAttribute">requestedPath</Set>
+        <Call name="addRule">
+            <Arg>
+                <New class="org.eclipse.jetty.rewrite.handler.RedirectPatternRule">
+                    <Set name="pattern" type="String"/>
+                    <Set name="location">/kibana/Index.html</Set>
+                    <Set name="handling">true</Set>
+                    <Set name="terminating">true</Set>
+                </New>
+            </Arg>
+        </Call>
+        <Call name="addRule">
+            <Arg>
+                <New class="org.eclipse.jetty.rewrite.handler.RedirectPatternRule">
+                    <Set name="pattern">/favicon.ico</Set>
+                    <Set name="location">/kibana/img/small.png</Set>
+                    <Set name="handling">true</Set>
+                    <Set name="terminating">true</Set>
+                </New>
+            </Arg>
+        </Call>
+        <Set name="handler">
+            <Ref refid="ServletContextHandler"/>
+        </Set>
+    </New>
+
+    <New class="org.eclipse.jetty.servlet.ServletContextHandler" id="ElasticHandler">
+        <Arg type="int">3</Arg>
+        <Set name="contextPath">/</Set>
+        <Set name="securityHandler">
+            <New class="com.bist.elasticsearch.jetty.security.ElasticConstraintSecurityHandler" id="ElasticSecurityHandler">
+                <Set name="realmName">Ldap Realm</Set>
+                <!--<Set name="strict">true</Set>-->
+                <Set name="sessionRenewedOnAuthentication">true</Set>
+                <Set name="configurationWatcher"><Ref refid="AuthorizationConfigurationWatcher"/></Set>
+                <Set name="authenticator">
+                    <New class="org.eclipse.jetty.security.authentication.BasicAuthenticator"></New>
+                </Set>
+            </New>
+        </Set>
+        <Get name="servletHandler" id="ElasticServletHandler">
+            <Set name="handler">
+                <New id="HttpServerAdapterHandler2"
+                     class="com.bist.elasticsearch.jetty.handler.JettyHttpServerTransportHandler">
+                    <Set name="transport">
+                        <Ref refid="ESServerTransport"/>
+                    </Set>
+                </New>
+            </Set>
+        </Get>
+    </New>
+
+
+    <Set name="handler">
+        <New class="com.bist.elasticsearch.jetty.handler.ElasticHandler">
+            <Arg>
+                <Ref refid="RewriteHandler"/>
+            </Arg>
+            <Arg>
+                <Ref refid="ElasticHandler"/>
+            </Arg>
+        </New>
+    </Set>
+
+</Configure>

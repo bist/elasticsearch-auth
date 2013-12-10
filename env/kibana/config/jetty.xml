@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure id="ESServer" class="org.eclipse.jetty.server.Server">
+
+
+    <!-- ==================================================== -->
+    <!--   Reduce verbosity of jetty default error handler    -->
+    <!-- ==================================================== -->
+    <Call name="addBean">
+        <Arg>
+            <New class="com.bist.elasticsearch.jetty.error.JettyHttpServerErrorHandler"
+                 id="HttpServerErrorHandler">
+            </New>
+        </Arg>
+    </Call>
+
+    <!-- ======================================== -->
+    <!--         Add HTTP connector               -->
+    <!-- ======================================== -->
+    <Call name="addConnector">
+        <Arg>
+            <New class="org.eclipse.jetty.server.ServerConnector">
+                <Arg name="server">
+                    <Ref refid="ESServer"/>
+                </Arg>
+                <Arg name="factories">
+                    <Array type="org.eclipse.jetty.server.ConnectionFactory">
+                        <Item>
+                            <New class="org.eclipse.jetty.server.HttpConnectionFactory">
+                                <Arg>
+                                    <New class="org.eclipse.jetty.server.HttpConfiguration"></New>
+                                </Arg>
+                            </New>
+                        </Item>
+                    </Array>
+
+                </Arg>
+                <Set name="host">
+                    <Property name="jetty.bind_host"/>
+                </Set>
+                <Set name="port">
+                    <Property name="jetty.port"/>
+                </Set>
+                <!--<Set name="maxIdleTime">600000</Set>-->
+                <Set name="AcceptQueueSize">4</Set>
+            </New>
+        </Arg>
+    </Call>
+
+    <Call name="addBean">
+        <Arg>
+            <New class="org.eclipse.jetty.jaas.JAASLoginService" id="DefaultLoginService">
+                <Set name="Name">Ldap Realm</Set>
+                <Set name="LoginModuleName">ldaploginmodule</Set>
+            </New>
+        </Arg>
+    </Call>
+
+
+
+
+</Configure>
