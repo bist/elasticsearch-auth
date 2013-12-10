@@ -10,8 +10,8 @@
     <version>0.90.5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Elasticsearch Jetty Front End Plugin</name>
-    <description>Jetty plugin for ElasticSearch Front End like Kibana</description>
+    <name>Elasticsearch Authentication and Authorization Jetty Front End Plugin</name>
+    <description>Elasticsearch Authentication and Authorization Jetty Front End Plugin</description>
     <inceptionYear>2013</inceptionYear>
     <url>https://github.com/zeldal/ElasticAuth-Jetty</url>
     <licenses>
@@ -22,9 +22,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git@github.com:zeldal/ElasticAuth-Jetty.git</connection>
-        <developerConnection>scm:git:git@github.com:zeldal/ElasticAuth-Jetty.git</developerConnection>
-        <url>https://github.com/zeldal/ElasticAuth-Jetty</url>
+        <connection>scm:git:git@github.com:bist/elasticsearch-auth.git</connection>
+        <developerConnection>scm:git:git@github.com:bist/elasticsearch-auth.git</developerConnection>
+        <url>https://github.com/bist/elasticsearch-auth</url>
     </scm>
     <developers>
         <developer>
