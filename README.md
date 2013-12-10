@@ -1,8 +1,5 @@
 
-[![Build Status](https://travis-ci.org/bist/elasticsearch-auth.png?branch=master)](https://travis-ci.org/bist/elasticsearch-auth)
-
-ElasticAuth-Jetty
-=================
+##ElasticAuth-Jetty [![Build Status](https://travis-ci.org/bist/elasticsearch-auth.png?branch=master)](https://travis-ci.org/bist/elasticsearch-auth)
 
 Elastic Search Authentication &amp; Authorization Module based on Jetty. 
 This project is intended to solve Authentication & Authorization problem of Front End GUIs run on Elastic Search, such as Kibana.
