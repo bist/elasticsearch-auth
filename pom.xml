@@ -7,7 +7,7 @@
 
     <groupId>com.bist.elasticsearch</groupId>
     <artifactId>elasticsearch-auth</artifactId>
-    <version>0.90.5-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Elasticsearch Authentication and Authorization Jetty Front End Plugin</name>
@@ -42,7 +42,7 @@
     </developers>
 
     <properties>
-        <elasticsearch.version>0.90.5</elasticsearch.version>
+        <elasticsearch.version>1.0.0</elasticsearch.version>
         <!--Latest, Greatest, Bigger-->
         <jetty.version>9.0.6.v20130930</jetty.version>
         <!--Latest, Greatest, Bigger-->
