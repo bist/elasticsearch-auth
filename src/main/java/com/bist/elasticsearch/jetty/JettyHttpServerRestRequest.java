@@ -18,21 +18,21 @@ package com.bist.elasticsearch.jetty;
 import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.common.io.Streams;
+import org.elasticsearch.common.netty.channel.Channel;
 import org.elasticsearch.http.HttpRequest;
-import org.elasticsearch.rest.support.AbstractRestRequest;
+import org.elasticsearch.http.netty.NettyHttpRequest;
 import org.elasticsearch.rest.support.RestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author imotov
  * @author zeldal
  * Migrated to new plugin
  */
-public class JettyHttpServerRestRequest extends AbstractRestRequest implements HttpRequest {
+public class JettyHttpServerRestRequest extends HttpRequest  {
 
     public static final String REQUEST_CONTENT_ATTRIBUTE = "com.sonian.elasticsearch.http.jetty.request-content";
 
@@ -43,8 +43,9 @@ public class JettyHttpServerRestRequest extends AbstractRestRequest implements H
     private final Map<String, String> params;
 
     private final BytesReference content;
-    
+
     private final String opaqueId;
+    private final List<Map.Entry<String,String>> headers;
 
     public JettyHttpServerRestRequest(HttpServletRequest request) throws IOException {
         this.request = request;
@@ -55,6 +56,13 @@ public class JettyHttpServerRestRequest extends AbstractRestRequest implements H
         if (request.getQueryString() != null) {
             RestUtils.decodeQueryString(request.getQueryString(), 0, params);
         }
+        headers = new ArrayList<Map.Entry<String, String>>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while(headerNames.hasMoreElements()){
+            String header = headerNames.nextElement();
+            headers.add(new AbstractMap.SimpleEntry<>(header, request.getHeader(header)));
+        }
+
 
         content = new BytesArray(Streams.copyToByteArray(request.getInputStream()));
         request.setAttribute(REQUEST_CONTENT_ATTRIBUTE, content);
@@ -100,6 +108,11 @@ public class JettyHttpServerRestRequest extends AbstractRestRequest implements H
         return request.getHeader(name);
     }
 
+    @Override
+    public Iterable<Map.Entry<String, String>> headers() {
+        return headers;
+    }
+
     @Override public Map<String, String> params() {
         return params;
     }
@@ -118,37 +131,5 @@ public class JettyHttpServerRestRequest extends AbstractRestRequest implements H
             return defaultValue;
         }
         return value;
-    }
-
-    public String localAddr() {
-        return this.request.getLocalAddr();
-    }
-
-    public long localPort() {
-        return this.request.getLocalPort();
-    }
-
-    public String remoteAddr() {
-        return this.request.getRemoteAddr();
-    }
-
-    public long remotePort() {
-        return this.request.getRemotePort();
-    }
-    
-    public String remoteUser() {
-        return this.request.getRemoteUser();
-    }
-    
-    public String scheme() {
-        return this.request.getScheme();
-    }
-    
-    public String contentType() {
-        return this.request.getContentType();
-    }
-
-    public String opaqueId() {
-        return this.opaqueId;
     }
 }
